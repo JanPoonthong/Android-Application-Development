@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -32,10 +33,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    var studentCode by remember { mutableStateOf(currentText) }
+                    Column (modifier = Modifier.padding(innerPadding).fillMaxSize()
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .wrapContentHeight(Alignment.CenterVertically)) {
+                        StudentCodeGreetingText(studentCode)
+                        StudentCodeTextField(
+                            studentCode, onTextChange = {
+                                if (it.length <= 7 && it.all { character -> character.isDigit() }) {
+                                    studentCode = it
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -53,29 +63,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf(currentText) }
-    Column (modifier = modifier.fillMaxSize()
-        .wrapContentWidth(Alignment.CenterHorizontally)
-        .wrapContentHeight(Alignment.CenterVertically)) {
+fun StudentCodeTextField(currentText: String, onTextChange: (String) -> Unit) {
+    Column {
         TextField(
-            value = text,
-            onValueChange = { newValue ->
-                if (newValue.all { it.isDigit() } && newValue.length <= 7) {
-                    text = newValue
-                    currentText = newValue
-                }
-            },
-            placeholder = {Text("Student Code")},
-            label = {Text("Student Code")}
+            value = currentText,
+            onValueChange = onTextChange,
+            placeholder = { Text("Student Code") },
+            label = { Text("Student Code") }
         )
     }
+}
+
+@Composable
+fun StudentCodeGreetingText(studentCode: String) {
+    Text("Hello $studentCode", modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally))
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     MyApplicationTheme {
-        Greeting("Android")
+        StudentCodeGreetingText(currentText)
     }
 }

@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -16,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.starterapplication.ui.theme.StarterApplicationTheme
@@ -80,17 +83,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf(currentText) }
-    Column {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
+    Column (modifier = modifier.fillMaxSize()
+        .wrapContentWidth(Alignment.CenterHorizontally)
+        .wrapContentHeight(Alignment.CenterVertically)) {
+        TextField(
+            value = text,
+            onValueChange = { newValue ->
+                if (newValue.all { it.isDigit() } && newValue.length <= 7) {
+                    text = newValue
+                    currentText = newValue
+                }
+            },
+            placeholder = {Text("Student Code")},
+            label = {Text("Student Code")}
         )
-        TextField(text, label = {
-            Text("Text")
-        }, onValueChange = {
-            text = it
-            currentText = it
-        })
     }
 }
 
